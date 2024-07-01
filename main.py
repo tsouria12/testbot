@@ -1,8 +1,14 @@
 import os
+import logging
 from flask import Flask
 from threading import Thread
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
+
+# Logging configuration
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -11,6 +17,7 @@ def hello():
     return "Hello, World!"
 
 def start(update: Update, context: CallbackContext) -> None:
+    logger.info("Received /start command")
     update.message.reply_text('Hello! I am your bot.')
 
 def run_flask():
@@ -27,7 +34,8 @@ def run_telegram_bot():
     updater.start_webhook(listen="0.0.0.0",
                           port=8443,
                           url_path=token)
-    updater.bot.setWebhook(f"https://testbot-05xl.onrender.com/{token}")
+    webhook_url = f"https://testbot-05xl.onrender.com/{token}"
+    updater.bot.setWebhook(webhook_url)
 
     updater.idle()
 
